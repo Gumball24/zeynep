@@ -9,8 +9,9 @@
 """
 
 import logging
+import os
 
-TOKEN = ""
+TOKEN = os.environ["TOKEN"]
 """ Bot token from https://discordapp.com/developers/applications/me """
 
 MONIUM_LOGLEVEL = logging.INFO
