@@ -39,7 +39,8 @@ class HelloModule(Module):
             .replace("%self%", "|".join(self.client.get_configuration(message.server.id).get("zeynep.subject.self"))) \
             .replace("%message%",
                      "|".join(self.client.get_configuration(message.server.id).get("zeynep.message.hello")))
-
+        self.logger.info(regex)
         if re.fullmatch(regex, message.content):
             await self.client.send_message(message.channel, random.choice(
                 self.client.get_configuration(message.server.id).get("zeynep.response.hello")))
+            self.logger.info(self.client.get_configuration(message.server.id).get("zeynep.response.hello"))
