@@ -10,4 +10,4 @@ class PingModule(Module):
     authors = ["Karahan"]
 
     async def on_ready(self):
-        await self.client.cmd.register_command(PingCommand(self))
+        self.client.cmd.register_command(PingCommand(self))
