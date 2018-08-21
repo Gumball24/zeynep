@@ -14,10 +14,32 @@ class HelloModule(Module):
     def init(self):
         self.logger.info("Module enabled.")
 
-    responses = ["merhaba", "as", "selam", "aleyküm selam"]
+    async def on_ready(self):
+        for server in self.client.servers:
+            self.client.get_configuration(server.id).set_if_not_exist(
+                "zeynep.subject.self",
+                ["zeynep", "zeynep hanım"]
+            )
+            self.client.get_configuration(server.id).set_if_not_exist(
+                "zeynep.message.hello",
+                ["merhaba", "selam"]
+            )
+            self.client.get_configuration(server.id).set_if_not_exist(
+                "zeynep.response.hello",
+                ["merhaba", "selam"]
+            )
+            self.client.get_configuration(server.id).set_if_not_exist(
+                "zeynep.regex.hello",
+                "(%self% )?%message%( %self%)?"
+            )
+            self.client.get_configuration(server.id).save()
 
     async def on_message(self, message: discord.Message):
-        if re.fullmatch(
-                "((k+ı+z+l+a+r+|b+e+y+l+e+r+|z+e+y+n+e+p+) )?(s+a+|s+e+l+a+m+(ü+|u+)n+ a+l+e+y+k+(ü+|u+)m+|m+e+r+h+a+b+a+|s+e+l+a+m+|h+i+|h+e+l+l+o+|n+a+b+e+r+)( (k+ı+z+l+a+r+|b+e+y+l+e+r+|z+e+y+n+e+p+))?(!+|\.+)?",
-                message.content, re.IGNORECASE):
-            await self.client.send_message(message.channel, random.choice(self.responses))
+        regex = self.client.get_configuration(message.server.id).get("zeynep.regex.hello") \
+            .replace("%self%", "|".join(self.client.get_configuration(message.server.id).get("zeynep.subject.self"))) \
+            .replace("%message%",
+                     "|".join(self.client.get_configuration(message.server.id).get("zeynep.message.hello")))
+
+        if re.fullmatch(regex, message.content):
+            await self.client.send_message(message.channel, random.choice(
+                self.client.get_configuration(message.server.id).get("zeynep.response.hello")))
