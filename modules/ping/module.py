@@ -1,13 +1,13 @@
 from monium.module import Module
 
-from modules.ping.commands.PingCommand import PingCommand
+from modules.ping.commands.ping import PingCommand
 
 
 class PingModule(Module):
     id = "ping"
-    name = "Ping Module"
+    name = "PingModule"
     version = (1, 0, 0)
     authors = ["Karahan"]
 
-    def init(self):
-        self.client.cmd.register_command(PingCommand())
+    async def on_ready(self):
+        await self.client.cmd.register_command(PingCommand(self))
